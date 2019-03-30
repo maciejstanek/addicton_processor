@@ -65,8 +65,8 @@ def alcohol_inertia(speeds):
 
 def rotate_vector(v):
     rvec = Vector3()
-    rvec.x =  0.9933649 * v.x +  0.1139548 * v.y + -0.0155064 * v.z
-    rvec.y = -0.1144413 * v.x +  0.9928030 * v.y + -0.0352909 * v.z
+    rvec.x =  1.0000000 * v.x +  0.0000000 * v.y +  0.0000000 * v.z
+    rvec.y =  0.0000000 * v.x +  1.0000000 * v.y +  0.0000000 * v.z
     rvec.z =  0.0113733 * v.x +  0.0368313 * v.y +  0.9992568 * v.z
 
     return rvec
