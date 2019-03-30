@@ -58,9 +58,9 @@ def alcohol_inertia(speeds):
     xs = [i.x for i in inertia_queue]
     ys = [i.y for i in inertia_queue]
     zs = [i.z for i in inertia_queue]
-    xavg = sum(xs) / len(xs)
-    yavg = sum(ys) / len(ys)
-    zavg = sum(zs) / len(zs)
+    xavg = sum(xs) / len(xs) if len(xs) > 0 else 0
+    yavg = sum(ys) / len(ys) if len(ys) > 0 else 0
+    zavg = sum(zs) / len(zs) if len(zs) > 0 else 0
     return Vector3(xavg, yavg, zavg)
 
 def rotate_vector(v):
@@ -96,7 +96,7 @@ if __name__ == '__main__':
     rate = rospy.Rate(100)
     while not rospy.is_shutdown():
         speeds_processed = alcohol_latency(speeds)
-        speeds_processed = alcohol_inertia(speeds)
+        #speeds_processed = alcohol_inertia(speeds)
         speeds_processed = rotate_vector(speeds_processed)
         pub_speeds.publish(speeds_processed)
         pub_dose.publish(dose_level)
