@@ -9,20 +9,30 @@ from geometry_msgs.msg import Vector3
 dose_level = 0
 params = [
     {
-        "latency_queue_len": 0,
+        "latency": 0,
+        "inertia": 0,
     },
     {
-        "latency_queue_len": 10,
+        "latency": 10,
+        "inertia": 10,
     },
     {
-        "latency_queue_len": 30,
+        "latency": 30,
+        "inertia": 30,
     },
     {
-        "latency_queue_len": 100,
+        "latency": 100,
+        "inertia": 100,
     },
 ]
+def get_param(param):
+    global params
+    global dose_level
+    return params[dose_level][param]
+
 speeds = Vector3()
 latency_queue = []
+inertia_queue = []
 
 def alcohol_latency(speeds):
     global latency_queue
@@ -32,9 +42,26 @@ def alcohol_latency(speeds):
     ret = Vector3()
     for i in range(2):
         # Repeat one more time to cut down the queue after decreasing dose level
-        if len(latency_queue) > params[dose_level]["latency_queue_len"]:
+        if len(latency_queue) > get_param("latency"):
             ret = latency_queue.pop(0)
     return ret
+
+def alcohol_inertia(speeds):
+    global inertia_queue
+    global params
+    global dose_level
+    inertia_queue.append(Vector3(speeds.x, speeds.y, speeds.z))
+    for i in range(2):
+        # Repeat one more time to cut down the queue after decreasing dose level
+        if len(inertia_queue) > get_param("inertia"):
+            inertia_queue.pop(0)
+    xs = [i.x for i in inertia_queue]
+    ys = [i.y for i in inertia_queue]
+    zs = [i.z for i in inertia_queue]
+    xavg = sum(xs) / len(xs)
+    yavg = sum(ys) / len(ys)
+    zavg = sum(zs) / len(zs)
+    return Vector3(xavg, yavg, zavg)
 
 def rotate_vector(v):
     rvec = Vector3()
@@ -43,17 +70,6 @@ def rotate_vector(v):
     rvec.z = 0.5203  * v.x + 0.67565 * v.y + 0.06884  * v.z
 
     return rvec
-
-# latency_queue = []
-# latency_queue_len = 100
-# 
-# def alcohol_slide(speeds):
-#     global slide_queue
-#     global slide_queue_len
-#     slide_queue.append(speeds)
-#     if len(latency_queue) > latency_queue_len:
-#         latency_queue.pop(0)
-#     # x = [i for i in 
 
 def fnc_callback(msg):
     global speeds
@@ -80,6 +96,7 @@ if __name__ == '__main__':
     rate = rospy.Rate(100)
     while not rospy.is_shutdown():
         speeds_processed = alcohol_latency(speeds)
+        speeds_processed = alcohol_inertia(speeds)
         speeds_processed = rotate_vector(speeds_processed)
         pub_speeds.publish(speeds_processed)
         pub_dose.publish(dose_level)
