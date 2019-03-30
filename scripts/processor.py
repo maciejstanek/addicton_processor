@@ -65,10 +65,9 @@ def alcohol_inertia(speeds):
 
 def rotate_vector(v):
     rvec = Vector3()
-    rvec.x =  1.0000000 * v.x +  0.0000000 * v.y +  0.0000000 * v.z
-    rvec.y =  0.0000000 * v.x +  1.0000000 * v.y +  0.0000000 * v.z
-    rvec.z =  0.0113733 * v.x +  0.0368313 * v.y +  0.9992568 * v.z
-
+    rvec.x = 1.48430 * v.x + -1.53144 * v.y + 3.81233 * v.z
+    rvec.y = -1.22391 * v.x + -0.38252 * v.y + 13.00481 * v.z
+    rvec.z = 0.47965 * v.x + 2.5049 * v.y + -16.2298 * v.z
     return rvec
 
 def fnc_callback(msg):
