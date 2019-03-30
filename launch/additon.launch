@@ -1,6 +1,7 @@
 <launch>
   <node pkg="addicton_processor" type="processor.py" name="processor_instance"/>
   <node pkg="addicton_processor" type="kinova.py" name="kinova_instance"/>
+  <node pkg="addicton_processor" type="imageprocessor.py" name="imageprocessor_instance"/>
   <node pkg="joy" type="joy_node" name="joy_node_instance">
     <param name="deadzone" value="0.2"/>
     <param name="autorepeat_rate" value="0"/>
