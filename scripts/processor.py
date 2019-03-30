@@ -104,5 +104,3 @@ if __name__ == '__main__':
         pub_speeds.publish(speeds_processed)
         pub_dose.publish(dose_level)
         rate.sleep()
-
-
