@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 import rospy
+import numpy as np
 
 from std_msgs.msg import Int32
 from sensor_msgs.msg import Joy
@@ -11,18 +12,22 @@ params = [
     {
         "latency": 0,
         "inertia": 0,
+        "spasm": 0,
     },
     {
         "latency": 10,
-        "inertia": 10,
+        "inertia": 30,
+        "spasm": 0.1,
     },
     {
         "latency": 30,
-        "inertia": 30,
+        "inertia": 70,
+        "spasm": 0.2,
     },
     {
-        "latency": 100,
-        "inertia": 100,
+        "latency": 50,
+        "inertia": 150,
+        "spasm": 0.3,
     },
 ]
 def get_param(param):
@@ -33,6 +38,12 @@ def get_param(param):
 speeds = Vector3()
 latency_queue = []
 inertia_queue = []
+
+def alcohol_spasm(speeds):
+    amp = get_param("spasm")
+    speeds.x += amp * np.random.rand()	
+    speeds.y += amp * np.random.rand()	
+    return speeds
 
 def alcohol_latency(speeds):
     global latency_queue
@@ -63,14 +74,6 @@ def alcohol_inertia(speeds):
     zavg = sum(zs) / len(zs) if len(zs) > 0 else 0
     return Vector3(xavg, yavg, zavg)
 
-def rotate_vector(v):
-    rvec = Vector3()
-    rvec.x =  1.0000000 * v.x +  0.0000000 * v.y +  0.0000000 * v.z
-    rvec.y =  0.0000000 * v.x +  1.0000000 * v.y +  0.0000000 * v.z
-    rvec.z =  0.0113733 * v.x +  0.0368313 * v.y +  0.9992568 * v.z
-
-    return rvec
-
 def fnc_callback(msg):
     global speeds
     global dose_level
@@ -96,8 +99,8 @@ if __name__ == '__main__':
     rate = rospy.Rate(100)
     while not rospy.is_shutdown():
         speeds_processed = alcohol_latency(speeds)
-        #speeds_processed = alcohol_inertia(speeds)
-        speeds_processed = rotate_vector(speeds_processed)
+        speeds_processed = alcohol_spasm(speeds_processed)
+        speeds_processed = alcohol_inertia(speeds_processed)
         pub_speeds.publish(speeds_processed)
         pub_dose.publish(dose_level)
         rate.sleep()
