@@ -42,9 +42,9 @@ class Kinova():
         rospy.init_node('kinova', anonymous=True)
 
     def set_vel(self, msg):
-        self.x = msg.x
-        self.y = msg.y
-        self.z = msg.z
+        self.x = 0.1*msg.x
+        self.y = 0.1*msg.y
+        self.z = 0.1*msg.z
 
     def run(self):
         rate = rospy.Rate(100)

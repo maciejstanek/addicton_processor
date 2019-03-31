@@ -18,21 +18,21 @@ params = [
     },
     {
         "latency": 10,
-        "inertia": 30,
+        "inertia": 130,
         "spasm": 0,
-        "drift": 0.02,
+        "drift": 0.1,
     },
     {
         "latency": 20,
-        "inertia": 70,
+        "inertia": 350,
         "spasm": 0,
-        "drift": 0.05,
+        "drift": 0.2,
     },
     {
         "latency": 40,
-        "inertia": 150,
+        "inertia": 750,
         "spasm": 0.2,
-        "drift": 0.1,
+        "drift": 0.5,
     },
 ]
 def get_param(param):
