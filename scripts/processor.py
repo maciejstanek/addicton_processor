@@ -8,6 +8,7 @@ from sensor_msgs.msg import Joy
 from geometry_msgs.msg import Vector3
 
 dose_level = 0
+rebase = 0
 params = [
     {
         "latency": 0,
@@ -94,6 +95,7 @@ def alcohol_inertia(speeds):
 def fnc_callback(msg):
     global speeds
     global dose_level
+    global rebase
     speeds.x = -msg.axes[3]
     speeds.y = msg.axes[4]
     speeds.z = msg.axes[1] + speeds.y * 0.003 + speeds.x * 0.005
@@ -106,11 +108,13 @@ def fnc_callback(msg):
     elif msg.buttons[3] == 1:
         dose_level = 3
     # Else do not change level
+    rebase = msg.buttons[5]
    
 if __name__ == '__main__':
     rospy.init_node('processor')
     pub_speeds=rospy.Publisher('speeds', Vector3, queue_size=1)
     pub_dose=rospy.Publisher('dose', Int32, queue_size=1)
+    pub_rebase=rospy.Publisher('rebase', Int32, queue_size=1)
     sub=rospy.Subscriber('joy', Joy, fnc_callback)
 
     rate = rospy.Rate(100)

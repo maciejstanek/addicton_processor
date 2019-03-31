@@ -1,16 +1,44 @@
 #! /usr/bin/env python
 import rospy
 from kinova_msgs.msg import PoseVelocity
-from geometry_msgs.msg import Vector3
-
+from geometry_msgs.msg import Vector3, Point, Quaternion
 
 import math
 import argparse
 
 class Kinova():
+
+    def rebase(self, msg):
+        if not msg.data:
+            return
+
+        position = [0.346, 0.439, 0.061]
+        orientation = [-0.15, -0.691, -0.706, -0.004]
+
+        client = actionlib.SimpleActionClient('/j2n6s300_driver/pose_action/tool_pose', kinova_msgs.msg.ArmPoseAction)
+        client.wait_for_server()
+
+        goal = kinova_msgs.msg.ArmPoseGoal()
+        goal.pose.header = std_msgs.msg.Header(frame_id=('j2n6s300_link_base'))
+        goal.pose.pose.position = geometry_msgs.msg.Point(
+            x=position[0], y=position[1], z=position[2])
+        goal.pose.pose.orientation = geometry_msgs.msg.Quaternion(
+            x=orientation[0], y=orientation[1], z=orientation[2], w=orientation[3])
+
+        rospy.logwarn('goal.pose in client 1: {}'.format(goal.pose.pose)) # debug
+
+        client.send_goal(goal)
+
+        if client.wait_for_result(rospy.Duration(10.0)):
+            return #client.get_result()
+        client.cancel_all_goals()
+        rospy.logerr('the cartesian action timed-out')
+        return #None
+
     def __init__(self):
         self.pub = rospy.Publisher('/j2n6s300_driver/in/cartesian_velocity', PoseVelocity, queue_size=10)
         rospy.Subscriber("/speeds", Vector3, self.set_vel)
+        rospy.Subscriber("/rebase", Vector3, self.rebase)
         rospy.init_node('kinova', anonymous=True)
 
     def set_vel(self, msg):
