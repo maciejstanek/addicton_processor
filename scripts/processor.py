@@ -96,7 +96,7 @@ def fnc_callback(msg):
     global dose_level
     speeds.x = -msg.axes[3]
     speeds.y = msg.axes[4]
-    speeds.z = msg.axes[1]
+    speeds.z = msg.axes[1] + speeds.y * 0.003 + speeds.x * 0.005
     if msg.buttons[0] == 1:
         dose_level = 0
     elif msg.buttons[1] == 1:
