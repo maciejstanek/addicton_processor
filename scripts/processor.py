@@ -88,6 +88,7 @@ def alcohol_inertia(speeds):
     xavg = sum(xs) / len(xs) if len(xs) > 0 else 0
     yavg = sum(ys) / len(ys) if len(ys) > 0 else 0
     zavg = sum(zs) / len(zs) if len(zs) > 0 else 0
+    rospy.logwarn("dbg: {}".format(len(inertia_queue)))
     return Vector3(xavg, yavg, zavg)
 
 def fnc_callback(msg):
@@ -123,7 +124,7 @@ if __name__ == '__main__':
         pub_dose.publish(dose_level)
         rate.sleep()
 	if i % 50 == 0:
-            inertia_len = np.random.randint(get_param("inertia")+1)
+            inertia_len = np.random.randint(get_param("inertia")+1)+1
         if i % 3 == 0:
             spasm_a = 2*np.random.rand()-1
             spasm_b = 2*np.random.rand()-1
